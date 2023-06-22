@@ -1,25 +1,33 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { createUser, signInUser } from "./services";
+import dotenv from 'dotenv';
+import { nextTick } from "process";
+
+dotenv.config();
 
 export async function signIn(
   request: Request,
-  response: Response
+  response: Response,
+  next: NextFunction
 ) {
   const { email, password } = request.body;
 
   try {
     const token = await signInUser({ email, password })
 
+    response.cookie("accessToken", token);
+
     return response.status(201).send({ token });
   } catch (error) {
     console.log('Error', console.log(error))
-    return response.send(error);
+    next(error)
   }
 }
 
 export async function signUp(
   request: Request,
-  response: Response
+  response: Response,
+  next: NextFunction
 ) {
   const { email, password, confirmPassword } = request.body;
   const passwords = { password, confirmPassword };
@@ -29,7 +37,7 @@ export async function signUp(
 
     return response.sendStatus(201);
   } catch (error) {
-    console.log('Error', console.log(error))
-    return response.send(error);
+    console.log('Error at controller', error)
+    next(error)
   }
 }

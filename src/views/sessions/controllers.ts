@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { getGoogleOAuthTokens, getGoogleUser } from "./services";
 import jwt from 'jsonwebtoken';
 import { createUser, signInUser } from "../users/services";
@@ -9,7 +9,8 @@ dotenv.config();
 
 export async function googleOauthHandler(
   request: Request,
-  response: Response
+  response: Response,
+  next: NextFunction
 ) {
   const code = request.query.code as string;
 
@@ -30,10 +31,8 @@ export async function googleOauthHandler(
 
     return response.redirect(process.env.ORIGIN as string);
   } catch (error) {
-    console.log('Error')
     console.log(error)
-
-    return response.send(error)
+    next(error)
   }
   
 }

@@ -3,6 +3,7 @@ import { insertSession } from "../sessions/repositories";
 import bycript from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv';
+import { duplicatedEmailError } from "./errors";
 
 dotenv.config();
 
@@ -37,7 +38,7 @@ export async function createUser({
 }: UserCreate) {
   const userAlreadyRegistered = await findUser(email);
 
-  if (userAlreadyRegistered && passwords) throw new Error('User already registered');
+  if (userAlreadyRegistered && passwords) throw duplicatedEmailError();
 
   let hashedPassword;
   if (passwords) {

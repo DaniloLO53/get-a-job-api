@@ -1,4 +1,4 @@
-import { prisma } from "@/config/database"
+import { prisma } from "@/config"
 
 export async function insertUser(email: string, password: string | null) {
   return await prisma.user.create({

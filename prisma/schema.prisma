@@ -18,6 +18,8 @@ model User {
   last_name  String?
   updated_at DateTime @default(now()) @updatedAt
   created_at DateTime @default(now())
+
+  @@map("users")
 }
 
 model Session {
@@ -26,4 +28,6 @@ model Session {
   valid      Boolean  @default(true)
   updated_at DateTime @default(now()) @updatedAt
   created_at DateTime @default(now())
+
+  @@map("sessions")
 }

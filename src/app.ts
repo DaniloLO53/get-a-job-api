@@ -5,7 +5,9 @@ import cors from 'cors';
 
 import { loadEnv, connectDb, disconnectDB } from '@/config';
 
-import sessionRoute from './config/views/sessions/routes'
+import sessionRoute from './views/sessions/routes'
+import userRoute from './views/users/routes';
+import { errorHandler } from './utils/errorHandler';
 
 loadEnv();
 
@@ -15,6 +17,8 @@ app
   .use(express.json())
   .get('/health', (_req, res) => res.send('OK!'))
   .use('', sessionRoute)
+  .use('', userRoute)
+  .use(errorHandler)
 
 export function init(): Promise<Express> {
   connectDb();
