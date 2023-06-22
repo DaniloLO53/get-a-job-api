@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { createUser, signInUser } from "./services";
 import dotenv from 'dotenv';
-import { nextTick } from "process";
 
 dotenv.config();
 
@@ -19,7 +18,7 @@ export async function signIn(
 
     return response.status(201).send({ token });
   } catch (error) {
-    console.log('Error', console.log(error))
+    console.log('Error', error)
     next(error)
   }
 }

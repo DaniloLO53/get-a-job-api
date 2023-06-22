@@ -11,6 +11,7 @@ export type RequestError = {
 export type ApplicationError = {
   name: string;
   message: string;
+  code: number;
 };
 
 export async function errorHandler(
@@ -22,9 +23,13 @@ export async function errorHandler(
   console.log('Error handler...')
   console.log('Error hadnler', error)
   console.log('Error name', error.name)
-  if (error.message === 'There is already an user with given email') {
-    return response.status(409).send({
+  if ("code" in error) {
+    return response.status(error.code).send({
       message: error.message,
+      code: error.code,
     });
   }
+  return response.status(500).send({
+    message: error.message,
+  }); 
 }

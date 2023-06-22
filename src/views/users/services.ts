@@ -3,7 +3,7 @@ import { insertSession } from "../sessions/repositories";
 import bycript from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv';
-import { duplicatedEmailError } from "./errors";
+import { confirmPasswordError, duplicatedEmailError, duplicatedEmailOauthError, noUserRegisteredError } from "./errors";
 
 dotenv.config();
 
@@ -32,10 +32,7 @@ function removeKeyFromObject<T extends AnyObject>(obj: T, key: keyof T): Omit<T,
 }
 
 
-export async function createUser({
-  email,
-  passwords,
-}: UserCreate) {
+export async function createUser({ email, passwords }: UserCreate) {
   const userAlreadyRegistered = await findUser(email);
 
   if (userAlreadyRegistered && passwords) throw duplicatedEmailError();
@@ -43,7 +40,7 @@ export async function createUser({
   let hashedPassword;
   if (passwords) {
     const { password, confirmPassword } = passwords
-    if (password !== confirmPassword) throw new Error('Passwords must match');
+    if (password !== confirmPassword) throw confirmPasswordError();
 
     hashedPassword = await bycript.hash(password, 12);
   } else if(userAlreadyRegistered) return userAlreadyRegistered
@@ -51,17 +48,14 @@ export async function createUser({
   return await insertUser(email, hashedPassword || null)
 }
 
-export async function signInUser({
-  email,
-  password,
-}: UserSignIn) {
+export async function signInUser({ email, password }: UserSignIn) {
   const dbUser = await findUser(email);
-  if (!dbUser) throw new Error('No user registered');
+  if (!dbUser) throw noUserRegisteredError();
 
-  if (!dbUser.password) throw new Error('User registered with oauth');
+  if (!dbUser.password) throw duplicatedEmailOauthError();
 
-  const validatePassword =  bycript.compare(password, dbUser.password)
-  if (!validatePassword) throw new Error('Invalid credentials');
+  const validatePassword =  await bycript.compare(password, dbUser.password)
+  if (!validatePassword) throw noUserRegisteredError();
 
   const session = await insertSession(dbUser.id);
 
