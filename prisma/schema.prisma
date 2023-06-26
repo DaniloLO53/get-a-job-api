@@ -11,15 +11,56 @@ datasource db {
 }
 
 model User {
+  id           Int           @id @default(autoincrement())
+  applications Application[]
+  email        String // colocar @unique
+  password     String?
+  first_name   String?
+  last_name    String?
+  updated_at   DateTime      @default(now()) @updatedAt
+  created_at   DateTime      @default(now())
+
+  @@map("users")
+}
+
+model Application {
   id         Int      @id @default(autoincrement())
-  email      String // colocar @unique
-  password   String?
-  first_name String?
-  last_name  String?
+  job_id     Int
+  user_id    Int
+  job        Job      @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   updated_at DateTime @default(now()) @updatedAt
   created_at DateTime @default(now())
 
-  @@map("users")
+  @@map("applications")
+}
+
+model Job {
+  id           Int           @id @default(autoincrement())
+  company_id   Int
+  company      Company       @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  applications Application[]
+  title        String?
+  description  String?
+  payment      String?
+  type         String?
+  office       String?
+  location     String?
+  vacancies    String?
+  updated_at   DateTime      @default(now()) @updatedAt
+  created_at   DateTime      @default(now())
+
+  @@map("jobs")
+}
+
+model Company {
+  id         Int      @id @default(autoincrement())
+  jobs       Job[]
+  name       String
+  updated_at DateTime @default(now()) @updatedAt
+  created_at DateTime @default(now())
+
+  @@map("companies")
 }
 
 model Session {
