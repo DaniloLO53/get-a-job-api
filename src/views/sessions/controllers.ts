@@ -29,7 +29,7 @@ export async function googleOauthHandler(
     );
     response.cookie("accessToken", accessToken);
 
-    return response.redirect(process.env.ORIGIN as string);
+    return response.redirect((process.env.ORIGIN as string) + "/jobs");
   } catch (error) {
     console.log(error)
     next(error)
