@@ -40,3 +40,18 @@ export async function signUp(
     next(error)
   }
 }
+
+export async function showProfile(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  const user = response.locals.user;
+
+  try {
+    return response.status(200).send({ user });
+  } catch (error) {
+    console.log('Error at controller', error)
+    next(error)
+  }
+}

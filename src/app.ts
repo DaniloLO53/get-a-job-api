@@ -8,6 +8,7 @@ import { loadEnv, connectDb, disconnectDB } from '@/config';
 import sessionRoute from './views/sessions/routes'
 import userRoute from './views/users/routes';
 import { errorHandler } from './utils/errorHandler';
+import jobsRoute from './views/jobs/routes';
 
 loadEnv();
 
@@ -18,6 +19,7 @@ app
   .get('/health', (_req, res) => res.send('OK!'))
   .use('', sessionRoute)
   .use('', userRoute)
+  .use('', jobsRoute)
   .use(errorHandler)
 
 export function init(): Promise<Express> {
