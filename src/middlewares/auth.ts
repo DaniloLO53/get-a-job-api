@@ -7,12 +7,13 @@ export async function auth(
   response: Response,
   next: NextFunction
 ) {
-  const { Authentication} = request.headers;
-  const [_, token] = (Authentication as string).split(" ");
+  const { authentication } = request.headers;
+  const [_, token] = (authentication as string).split(" ");
 
   try {
     const user = jwt.verify(token, process.env.JWT_SECRET as string);
-    if (user) throw unauthorized();
+
+    if (!user) throw unauthorized();
 
     response.locals.user = user;
     next();

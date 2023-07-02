@@ -1,4 +1,4 @@
-import { findUser, insertUser } from "./repositories";
+import { deleteSession, findUser, insertUser } from "./repositories";
 import { insertSession } from "../sessions/repositories";
 import bycript from 'bcrypt';
 import jwt from 'jsonwebtoken'
@@ -65,4 +65,10 @@ export async function signInUser({ email, password }: UserSignIn) {
     { dbUserWithoutPassword, session: session.id },
     process.env.JWT_SECRET as string
   );
+}
+
+export async function signOutUser(id: number) {
+  await deleteSession(id);
+
+  return;
 }

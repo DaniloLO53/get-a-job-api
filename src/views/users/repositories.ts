@@ -16,3 +16,11 @@ export async function findUser(email: string) {
     }
   })
 }
+
+export async function deleteSession(db_user_id: number) {
+  return await prisma.session.deleteMany({
+    where: {
+      db_user_id
+    }
+  })
+}

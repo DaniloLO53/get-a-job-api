@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createUser, signInUser } from "./services";
+import { createUser, signInUser, signOutUser } from "./services";
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -50,6 +50,23 @@ export async function showProfile(
 
   try {
     return response.status(200).send({ user });
+  } catch (error) {
+    console.log('Error at controller', error)
+    next(error)
+  }
+}
+
+export async function signOut(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  const user = response.locals.user;
+
+  try {
+    await signOutUser(user.id);
+
+    return response.sendStatus(201);
   } catch (error) {
     console.log('Error at controller', error)
     next(error)
