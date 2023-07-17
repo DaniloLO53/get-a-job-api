@@ -5,6 +5,6 @@ export declare class UserService {
     private readonly prismaService;
     constructor(prismaService: PrismaService);
     getProfileByEmail(email: string): Promise<User>;
-    createProfileByOauth(signUpData: Pick<SignUpDto, 'email'>): Promise<User>;
-    createProfile(signUpData: SignUpDto): Promise<User>;
+    createProfileByOauth(signUpData: Pick<SignUpDto, 'email'>): Promise<any>;
+    createProfile(signUpData: SignUpDto): Promise<any>;
 }

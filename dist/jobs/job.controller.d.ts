@@ -5,9 +5,7 @@ export declare class JobController {
     private lastJobInResults;
     private firstJobInResults;
     constructor(jobService: JobService);
-    listJobs(queries: any): Promise<(import(".prisma/client").Job & {
-        company: import(".prisma/client").Company;
-    })[]>;
-    searchJobs(queries: any): Promise<import(".prisma/client").Job[]>;
-    searchJobsPagination(queries: any, direction: Direction): Promise<import(".prisma/client").Job[]>;
+    listJobs(queries: any): Promise<any>;
+    searchJobs(queries: any): Promise<any>;
+    searchJobsPagination(queries: any, direction: Direction): Promise<any>;
 }
