@@ -10,57 +10,98 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id           Int           @id @default(autoincrement())
-  applications Application[]
-  email        String        @unique
-  password     String?
-  first_name   String?
-  last_name    String?
-  updated_at   DateTime      @default(now()) @updatedAt
-  created_at   DateTime      @default(now())
+model Customer {
+  id         Int         @id @default(autoincrement())
+  agreements Agreement[]
+  email      String      @unique
+  password   String?
+  first_name String?
+  last_name  String?
+  updated_at DateTime    @default(now()) @updatedAt
+  created_at DateTime    @default(now())
 
-  @@map("users")
+  @@map("customers")
 }
 
-model Application {
-  id         Int      @id @default(autoincrement())
-  job_id     Int
-  user_id    Int
-  job        Job      @relation(fields: [job_id], references: [id], onDelete: Cascade)
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  updated_at DateTime @default(now()) @updatedAt
-  created_at DateTime @default(now())
+model Schedule {
+  id             Int        @id @default(autoincrement())
+  service_id     Int
+  service        Service    @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  day            String
+  day_hour_start String
+  day_hour_end   String?
+  updated_at     DateTime   @default(now()) @updatedAt
+  created_at     DateTime   @default(now())
+  Agreement      Agreement?
 
-  @@map("applications")
+  @@map("schedules")
 }
 
-model Job {
-  id           Int           @id @default(autoincrement())
-  company_id   Int
-  company      Company       @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  applications Application[]
-  title        String?
-  description  String?
-  payment      String?
-  type         String?
-  office       String?
-  location     String?
-  vacancies    String?
-  updated_at   DateTime      @default(now()) @updatedAt
-  created_at   DateTime      @default(now())
+model Agreement {
+  id             Int             @id @default(autoincrement())
+  schedule_id    Int             @unique
+  customer_id    Int
+  schedule       Schedule        @relation(fields: [schedule_id], references: [id], onDelete: Cascade)
+  customer       Customer        @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  updated_at     DateTime        @default(now()) @updatedAt
+  created_at     DateTime        @default(now())
+  AgreementsInfo AgreementsInfo?
 
-  @@map("jobs")
+  @@map("agreements")
 }
 
-model Company {
-  id         Int      @id @default(autoincrement())
-  jobs       Job[]
-  name       String
-  updated_at DateTime @default(now()) @updatedAt
-  created_at DateTime @default(now())
+model AgreementsInfo {
+  id           Int        @id @default(autoincrement())
+  agreement_id Int        @unique
+  agreement    Agreement? @relation(fields: [agreement_id], references: [id])
+  updated_at   DateTime   @default(now()) @updatedAt
+  created_at   DateTime   @default(now())
 
-  @@map("companies")
+  @@map("agreements_info")
+}
+
+model Service {
+  id                  Int               @id @default(autoincrement())
+  service_provider_id Int
+  service_provider    ServiceProvider   @relation(fields: [service_provider_id], references: [id], onDelete: Cascade)
+  schedules           Schedule[]
+  title               String
+  description         String
+  min_price           String?
+  max_price           String?
+  updated_at          DateTime          @default(now()) @updatedAt
+  created_at          DateTime          @default(now())
+  LocationService     LocationService[]
+
+  @@map("services")
+}
+
+model LocationService {
+  id          Int      @id @default(autoincrement())
+  service_id  Int
+  service     Service  @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  min_price   String?
+  max_price   String?
+  updated_at  DateTime @default(now()) @updatedAt
+  created_at  DateTime @default(now())
+
+  @@map("location_services")
+}
+
+model ServiceProvider {
+  id         Int       @id @default(autoincrement())
+  services   Service[]
+  first_name String?
+  last_name  String?
+  nickname   String
+  email      String    @unique
+  password   String
+  updated_at DateTime  @default(now()) @updatedAt
+  created_at DateTime  @default(now())
+
+  @@map("service_providers")
 }
 
 model Session {
