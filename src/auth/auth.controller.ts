@@ -1,11 +1,12 @@
 import {
   Body,
   Controller,
+  Param,
   Post,
   Query,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
+import { CustomerService } from 'src/customer/customer.service';
 import { SignInDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -14,16 +15,16 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService,
+    private readonly customerService: CustomerService,
     private readonly jwtService: JwtService,
   ) {}
 
-  @Post('sign-in')
-  async signIn(@Body() body: SignInDto) {
-    return await this.authService.signIn(body);
+  @Post('/:user/sign-in')
+  async signIn(@Body() body: SignInDto, @Param('user') userType: 'customer' | 'worker') {
+    return await this.authService.signIn(body, userType);
   }
 
-  @Post('/oauth/google')
+  @Post('/customer/oauth/google')
   async googleOauthHandler(@Query() query: any) {
     const code = query.code as string;
 
@@ -36,7 +37,7 @@ export class AuthController {
         access_token,
       });
 
-      const dbUser = await this.userService.createProfileByOauth({
+      const dbUser = await this.customerService.createProfileByOauth({
         email: googleUser.email,
       });
 

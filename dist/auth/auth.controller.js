@@ -14,18 +14,18 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
-const user_service_1 = require("../user/user.service");
+const customer_service_1 = require("../customer/customer.service");
 const auth_dto_1 = require("./auth.dto");
 const auth_service_1 = require("./auth.service");
 const jwt_1 = require("@nestjs/jwt");
 let AuthController = exports.AuthController = class AuthController {
-    constructor(authService, userService, jwtService) {
+    constructor(authService, customerService, jwtService) {
         this.authService = authService;
-        this.userService = userService;
+        this.customerService = customerService;
         this.jwtService = jwtService;
     }
-    async signIn(body) {
-        return await this.authService.signIn(body);
+    async signIn(body, userType) {
+        return await this.authService.signIn(body, userType);
     }
     async googleOauthHandler(query) {
         const code = query.code;
@@ -35,7 +35,7 @@ let AuthController = exports.AuthController = class AuthController {
                 id_token,
                 access_token,
             });
-            const dbUser = await this.userService.createProfileByOauth({
+            const dbUser = await this.customerService.createProfileByOauth({
                 email: googleUser.email,
             });
             const token = await this.jwtService.signAsync({ dbUser });
@@ -47,14 +47,15 @@ let AuthController = exports.AuthController = class AuthController {
     }
 };
 __decorate([
-    (0, common_1.Post)('sign-in'),
+    (0, common_1.Post)('/:user/sign-in'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Param)('user')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_dto_1.SignInDto]),
+    __metadata("design:paramtypes", [auth_dto_1.SignInDto, String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signIn", null);
 __decorate([
-    (0, common_1.Post)('/oauth/google'),
+    (0, common_1.Post)('/customer/oauth/google'),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -63,7 +64,7 @@ __decorate([
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
-        user_service_1.UserService,
+        customer_service_1.CustomerService,
         jwt_1.JwtService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

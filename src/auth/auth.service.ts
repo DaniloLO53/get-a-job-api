@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
+import { CustomerService } from 'src/customer/customer.service';
 import { SignInDto } from './auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -10,17 +10,21 @@ import {
 } from './auth.interface';
 import axios from 'axios';
 import qs from 'qs';
+import { WorkerService } from 'src/worker/worker.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
+    private readonly customerService: CustomerService,
+    private readonly workerService: WorkerService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(signInData: SignInDto) {
+  async signIn(signInData: SignInDto, userType: 'customer' | 'worker') {
     const { email, password: pass } = signInData;
-    const userRegistered = await this.userService.getProfileByEmail(email);
+    const service = userType === 'customer' ? this.customerService : this.workerService;
+
+    const userRegistered = await service.getProfileByEmail(email);
     if (!userRegistered)
       throw new UnauthorizedException({ message: 'Invalid User' });
 
@@ -31,8 +35,9 @@ export class AuthService {
     if (!validatePassword)
       throw new UnauthorizedException({ message: 'Invalid User' });
     const { password, ...result } = userRegistered;
+    const payload = { ...result, roles: [userType]}
 
-    const token = await this.jwtService.signAsync({ result });
+    const token = await this.jwtService.signAsync({ result: payload });
     return { token };
   }
 

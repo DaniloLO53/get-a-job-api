@@ -25,8 +25,8 @@ model Customer {
 
 model Schedule {
   id             Int        @id @default(autoincrement())
-  service_id     Int
-  service        Service    @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  job_id         Int
+  job            Job        @relation(fields: [job_id], references: [id], onDelete: Cascade)
   day            String
   day_hour_start String
   day_hour_end   String?
@@ -60,48 +60,61 @@ model AgreementsInfo {
   @@map("agreements_info")
 }
 
-model Service {
-  id                  Int               @id @default(autoincrement())
-  service_provider_id Int
-  service_provider    ServiceProvider   @relation(fields: [service_provider_id], references: [id], onDelete: Cascade)
-  schedules           Schedule[]
-  title               String
-  description         String
-  min_price           String?
-  max_price           String?
-  updated_at          DateTime          @default(now()) @updatedAt
-  created_at          DateTime          @default(now())
-  LocationService     LocationService[]
+model Job {
+  id           Int           @id @default(autoincrement())
+  worker_id    Int
+  worker       Worker        @relation(fields: [worker_id], references: [id], onDelete: Cascade)
+  schedules    Schedule[]
+  title        String
+  description  String
+  min_price    String?
+  max_price    String?
+  updated_at   DateTime      @default(now()) @updatedAt
+  created_at   DateTime      @default(now())
+  location_job LocationJob[]
 
-  @@map("services")
+  @@map("jobs")
 }
 
-model LocationService {
-  id          Int      @id @default(autoincrement())
-  service_id  Int
-  service     Service  @relation(fields: [service_id], references: [id], onDelete: Cascade)
-  title       String
-  description String
-  min_price   String?
-  max_price   String?
-  updated_at  DateTime @default(now()) @updatedAt
-  created_at  DateTime @default(now())
+model LocationJob {
+  id         Int      @id @default(autoincrement())
+  job_id     Int
+  job        Job      @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  state      String
+  city       String
+  region     String
+  updated_at DateTime @default(now()) @updatedAt
+  created_at DateTime @default(now())
 
-  @@map("location_services")
+  @@map("location_jobs")
 }
 
-model ServiceProvider {
-  id         Int       @id @default(autoincrement())
-  services   Service[]
+model Worker {
+  id         Int      @id @default(autoincrement())
+  jobs       Job[]
+  rates      Rate[]
   first_name String?
   last_name  String?
   nickname   String
-  email      String    @unique
+  email      String   @unique
   password   String
-  updated_at DateTime  @default(now()) @updatedAt
-  created_at DateTime  @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  created_at DateTime @default(now())
 
-  @@map("service_providers")
+  @@map("workers")
+}
+
+model Rate {
+  id         Int      @id @default(autoincrement())
+  worker_id  Int
+  worker     Worker   @relation(fields: [worker_id], references: [id], onDelete: Cascade)
+  rate       Int
+  commentary String?
+  password   String
+  updated_at DateTime @default(now()) @updatedAt
+  created_at DateTime @default(now())
+
+  @@map("rates")
 }
 
 model Session {
