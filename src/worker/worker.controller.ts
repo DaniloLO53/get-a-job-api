@@ -18,6 +18,6 @@ export class WorkerController {
   @Roles(Role.Customer)
   @UseGuards(AuthGuard)
   async getWorker(@Param('workerId') workerId: string) {
-    return 'Testing authenticaded route';
+    return await this.workerService.getWorkerById(workerId);
   }
 }

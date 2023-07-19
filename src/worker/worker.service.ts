@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { Worker } from '@prisma/client';
 import { SignUpDto } from './worker.dto';
 import * as bcrypt from 'bcrypt';
+import { filterWorkerField } from './worker.helper';
 
 @Injectable()
 export class WorkerService {
@@ -12,6 +13,23 @@ export class WorkerService {
 
   async getProfileByEmail(email: string): Promise<Worker> {
     return await this.prismaService.worker.findUnique({ where: { email } });
+  }
+
+  async getWorkerById(workerId: string) {
+    const result = await this.prismaService.worker.findUnique({
+      where: {
+        id: Number(workerId)
+      },
+      include: {
+        jobs: {
+          include: {
+            schedules: true,
+            location_job: true,
+          }},
+        rates: true,
+      },
+    });
+    return filterWorkerField(result)
   }
 
   async createProfile(signUpData: SignUpDto) {

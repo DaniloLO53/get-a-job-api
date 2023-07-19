@@ -27,7 +27,7 @@ let WorkerController = exports.WorkerController = class WorkerController {
         return await this.workerService.createProfile(signUpData);
     }
     async getWorker(workerId) {
-        return 'Testing authenticaded route';
+        return await this.workerService.getWorkerById(workerId);
     }
 };
 __decorate([

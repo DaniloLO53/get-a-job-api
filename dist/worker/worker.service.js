@@ -13,12 +13,30 @@ exports.WorkerService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma.service");
 const bcrypt = require("bcrypt");
+const worker_helper_1 = require("./worker.helper");
 let WorkerService = exports.WorkerService = class WorkerService {
     constructor(prismaService) {
         this.prismaService = prismaService;
     }
     async getProfileByEmail(email) {
         return await this.prismaService.worker.findUnique({ where: { email } });
+    }
+    async getWorkerById(workerId) {
+        const result = await this.prismaService.worker.findUnique({
+            where: {
+                id: Number(workerId)
+            },
+            include: {
+                jobs: {
+                    include: {
+                        schedules: true,
+                        location_job: true,
+                    }
+                },
+                rates: true,
+            },
+        });
+        return (0, worker_helper_1.filterWorkerField)(result);
     }
     async createProfile(signUpData) {
         const { password, confirmPassword, email, nickname } = signUpData;
