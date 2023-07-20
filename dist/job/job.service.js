@@ -41,6 +41,32 @@ let JobService = exports.JobService = class JobService {
             }
         });
     }
+    async createJob(jobData, workerId) {
+        const { title, description, min_price, max_price } = jobData;
+        return await this.prismaService.job.create({
+            data: {
+                title, description, max_price, min_price, worker_id: workerId
+            }
+        });
+    }
+    async updateJob(jobData, workerId, jobId) {
+        const { title, description, min_price, max_price } = jobData;
+        const job = await this.prismaService.job.findUnique({ where: { id: Number(jobId) } });
+        if (!job)
+            throw new common_1.ConflictException({ message: 'No jobs found' });
+        if (job.worker_id !== Number(workerId))
+            throw new common_1.UnauthorizedException({
+                message: 'Can only modify own content'
+            });
+        return await this.prismaService.job.update({
+            where: {
+                id: Number(jobId)
+            },
+            data: {
+                title, description, max_price, min_price, worker_id: workerId
+            }
+        });
+    }
     async getJob(id) {
         return await this.prismaService.job.findUnique({
             where: { id: Number(id) },
@@ -68,27 +94,42 @@ let JobService = exports.JobService = class JobService {
             };
         return await this.prismaService.job.findMany({
             where,
+            take: 3,
             include: {
                 worker: true,
                 location_job: true
             },
         });
     }
-    async searchJobsPagination(queries, lastJobInResults, direction) {
-        const { title } = queries;
+    async listJobsMore(queries, lastJobInResults) {
         let prismaOptions = {};
-        const where = {
-            title: { contains: title, mode: client_1.Prisma.QueryMode.insensitive },
-        };
+        const { title, minRate, region, city, state } = queries;
+        let where = {};
+        if (minRate)
+            where = { ...where, minRate };
+        if (title)
+            where = {
+                ...where,
+                title: { contains: title, mode: client_1.Prisma.QueryMode.insensitive },
+            };
+        if (state)
+            where = {
+                ...where,
+                location_job: {
+                    some: {
+                        state: { contains: state, mode: client_1.Prisma.QueryMode.insensitive },
+                    }
+                }
+            };
         if (!lastJobInResults)
             throw new common_1.ConflictException({ message: 'No results at searching' });
         prismaOptions = {
             where,
             include: {
-                job_provider: true,
+                worker: true,
                 location_job: true,
             },
-            take: direction === 'forward' ? 7 : -7,
+            take: 3,
             skip: 1,
             cursor: {
                 id: lastJobInResults.id,
@@ -118,7 +159,7 @@ let JobService = exports.JobService = class JobService {
                 job_provider: true,
                 location_job: true,
             },
-            take: 7,
+            take: 3,
         };
         return await this.prismaService.job.findMany(prismaOptions);
     }
