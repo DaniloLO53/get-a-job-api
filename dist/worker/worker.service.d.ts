@@ -28,5 +28,7 @@ export declare class WorkerService {
         }[];
         rates: import(".prisma/client").Rate[];
     }>;
+    rate(rateData: any, workerId: string): Promise<import(".prisma/client").Rate>;
+    updateMyProfile(workerId: string, updatedData: any): Promise<Worker>;
     createProfile(signUpData: SignUpDto): Promise<Worker>;
 }

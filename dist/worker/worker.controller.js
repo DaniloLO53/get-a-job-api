@@ -29,6 +29,15 @@ let WorkerController = exports.WorkerController = class WorkerController {
     async getWorker(workerId) {
         return await this.workerService.getWorkerById(workerId);
     }
+    async getMyProfile(request) {
+        return await this.workerService.getWorkerById(request.userId);
+    }
+    async updateMyProfile(request, updatedData) {
+        return await this.workerService.updateMyProfile(request.userId, updatedData);
+    }
+    async rate(rateData, workerId) {
+        return await this.workerService.rate(rateData, workerId);
+    }
 };
 __decorate([
     (0, common_1.Post)('sign-up'),
@@ -38,7 +47,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], WorkerController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)('/:workerId'),
+    (0, common_1.Get)('/profiles/:workerId'),
     (0, role_decorator_1.Roles)(role_enum_1.Role.Customer),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, common_1.Param)('workerId')),
@@ -46,6 +55,35 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], WorkerController.prototype, "getWorker", null);
+__decorate([
+    (0, common_1.Get)('/me'),
+    (0, role_decorator_1.Roles)(role_enum_1.Role.Worker),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], WorkerController.prototype, "getMyProfile", null);
+__decorate([
+    (0, common_1.Put)('/me'),
+    (0, role_decorator_1.Roles)(role_enum_1.Role.Worker),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], WorkerController.prototype, "updateMyProfile", null);
+__decorate([
+    (0, common_1.Post)('/:workerId/rates'),
+    (0, role_decorator_1.Roles)(role_enum_1.Role.Customer),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Param)('workerId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], WorkerController.prototype, "rate", null);
 exports.WorkerController = WorkerController = __decorate([
     (0, common_1.Controller)('workers'),
     __metadata("design:paramtypes", [worker_service_1.WorkerService])

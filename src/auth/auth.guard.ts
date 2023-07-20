@@ -26,6 +26,7 @@ export class AuthGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
+    console.log('Required roles: ', requiredRoles)
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
@@ -35,6 +36,10 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
       });
+
+      console.log('Payload: ', payload.result)
+
+      request.userId = payload.result.id;
       
       return requiredRoles.some((role) => payload.result.roles?.includes(role));
     } catch {

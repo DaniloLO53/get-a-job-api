@@ -13,12 +13,12 @@ export declare class JobController {
     createSchedule(queries: ScheduleDto, id: string): Promise<import(".prisma/client").Schedule>;
     getSchedules(id: string): Promise<import(".prisma/client").Schedule[]>;
     getJob(id: string): Promise<import(".prisma/client").Job & {
-        worker: import(".prisma/client").Worker;
         location_job: import(".prisma/client").LocationJob[];
+        worker: import(".prisma/client").Worker;
     }>;
     listServices(queries: any): Promise<(import(".prisma/client").Job & {
-        worker: import(".prisma/client").Worker;
         location_job: import(".prisma/client").LocationJob[];
+        worker: import(".prisma/client").Worker;
     })[]>;
     searchJobs(queries: any): Promise<import(".prisma/client").Job[]>;
     searchJobsPagination(queries: any, direction: Direction): Promise<import(".prisma/client").Job[]>;

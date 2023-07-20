@@ -38,6 +38,25 @@ let WorkerService = exports.WorkerService = class WorkerService {
         });
         return (0, worker_helper_1.filterWorkerField)(result);
     }
+    async rate(rateData, workerId) {
+        const { rate, comment } = rateData;
+        return await this.prismaService.rate.create({
+            data: {
+                rate, comment, worker_id: Number(workerId)
+            },
+        });
+    }
+    async updateMyProfile(workerId, updatedData) {
+        const { email, first_name, last_name, nickname } = updatedData;
+        return await this.prismaService.worker.update({
+            where: {
+                id: Number(workerId)
+            },
+            data: {
+                email, first_name, last_name, nickname
+            },
+        });
+    }
     async createProfile(signUpData) {
         const { password, confirmPassword, email, nickname } = signUpData;
         const emailWithTypeInfered = email;

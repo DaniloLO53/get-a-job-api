@@ -27,4 +27,29 @@ export declare class WorkerController {
         }[];
         rates: import(".prisma/client").Rate[];
     }>;
+    getMyProfile(request: any): Promise<{
+        first_name: string;
+        last_name: string;
+        nickname: string;
+        email: string;
+        jobs: {
+            title: any;
+            description: any;
+            min_price: any;
+            max_price: any;
+            schedules: {
+                day: any;
+                day_hour_start: any;
+                day_hour_end: any;
+            }[];
+            location_job: {
+                state: any;
+                city: any;
+                region: any;
+            }[];
+        }[];
+        rates: import(".prisma/client").Rate[];
+    }>;
+    updateMyProfile(request: any, updatedData: any): Promise<import(".prisma/client").Worker>;
+    rate(rateData: any, workerId: string): Promise<import(".prisma/client").Rate>;
 }

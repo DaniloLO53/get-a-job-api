@@ -27,6 +27,7 @@ let AuthGuard = exports.AuthGuard = class AuthGuard {
         if (!requiredRoles) {
             return true;
         }
+        console.log('Required roles: ', requiredRoles);
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
         if (!token) {
@@ -36,6 +37,8 @@ let AuthGuard = exports.AuthGuard = class AuthGuard {
             const payload = await this.jwtService.verifyAsync(token, {
                 secret: process.env.JWT_SECRET,
             });
+            console.log('Payload: ', payload.result);
+            request.userId = payload.result.id;
             return requiredRoles.some((role) => payload.result.roles?.includes(role));
         }
         catch {
