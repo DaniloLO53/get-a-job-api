@@ -33,7 +33,7 @@ let JobController = exports.JobController = class JobController {
     async getJob(id) {
         return await this.jobService.getJob(id);
     }
-    async listServices(queries) {
+    async listJobs(queries) {
         return await this.jobService.listJobs(queries);
     }
     async searchJobs(queries) {
@@ -88,7 +88,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], JobController.prototype, "listServices", null);
+], JobController.prototype, "listJobs", null);
 __decorate([
     (0, common_1.Get)('search'),
     __param(0, (0, common_1.Query)()),

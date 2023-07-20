@@ -8,12 +8,12 @@ export declare class JobService {
     getSchedules(id: string): Promise<import(".prisma/client").Schedule[]>;
     createSchedule(id: string, queries: ScheduleDto): Promise<import(".prisma/client").Schedule>;
     getJob(id: string): Promise<import(".prisma/client").Job & {
-        location_job: import(".prisma/client").LocationJob[];
         worker: import(".prisma/client").Worker;
+        location_job: import(".prisma/client").LocationJob[];
     }>;
     listJobs(queries: any): Promise<(import(".prisma/client").Job & {
-        location_job: import(".prisma/client").LocationJob[];
         worker: import(".prisma/client").Worker;
+        location_job: import(".prisma/client").LocationJob[];
     })[]>;
     searchJobsPagination(queries: any, lastJobInResults: any, direction: Direction): Promise<import(".prisma/client").Job[]>;
     searchJobs(queries: any, lastJobInResults: any): Promise<import(".prisma/client").Job[]>;

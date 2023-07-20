@@ -43,29 +43,30 @@ export class JobService {
   }
 
   async listJobs(queries: any) {
-    const { title, description, id } = queries;
+    const { title, minRate, region, city, state } = queries;
     let where = {};
 
+    if (minRate) where = { ...where, minRate };
     if (title)
       where = {
         ...where,
         title: { contains: title, mode: Prisma.QueryMode.insensitive },
       };
-    if (description)
+    if (state)
       where = {
         ...where,
-        description: {
-          contains: description,
-          mode: Prisma.QueryMode.insensitive,
-        },
+        location_job: {
+          some: {
+            state: { contains: state, mode: Prisma.QueryMode.insensitive },
+          }
+        }
       };
-    if (id) where = { ...where, id };
-
+    
     return await this.prismaService.job.findMany({
       where,
       include: {
         worker: true,
-        location_job: true,
+        location_job: true
       },
     });
   }

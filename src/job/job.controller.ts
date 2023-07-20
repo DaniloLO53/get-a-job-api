@@ -33,7 +33,7 @@ export class JobController {
   }
 
   @Get()
-  async listServices(@Query() queries: any) {
+  async listJobs(@Query() queries: any) {
     return await this.jobService.listJobs(queries);
   }
 
