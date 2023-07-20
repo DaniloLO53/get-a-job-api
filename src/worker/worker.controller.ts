@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/auth/role.decorator';
 import { Role } from 'src/auth/role.enum';
-import { SignUpDto } from './worker.dto';
+import { DeleteRateDto, SignUpDto } from './worker.dto';
 import { WorkerService } from './worker.service';
 
 @Controller('workers')
@@ -38,8 +38,21 @@ export class WorkerController {
   @Post('/:workerId/rates')
   @Roles(Role.Customer)
   @UseGuards(AuthGuard)
-  async rate(@Body() rateData: any, @Param('workerId') workerId: string) {
-    return await this.workerService.rate(rateData, workerId);
+  async rate(@Body() rateData: any, @Request() request: any, @Param('workerId') workerId: string) {
+    return await this.workerService.rate(rateData, workerId, request.userId);
+  }
+
+  @Get('/:workerId/rates')
+  @Roles(Role.Customer)
+  @UseGuards(AuthGuard)
+  async getRates(@Param('workerId') workerId: string) {
+    return await this.workerService.getRates(workerId);
+  }
+
+  @Delete('/:workerId/rates/:rateId')
+  @Roles(Role.Customer)
+  @UseGuards(AuthGuard)
+  async deleteRate(@Request() request: any, @Param() params: DeleteRateDto) {
+    return await this.workerService.deleteRate(request.userId, params);
   }
 }
-//

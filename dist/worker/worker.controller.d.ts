@@ -1,4 +1,4 @@
-import { SignUpDto } from './worker.dto';
+import { DeleteRateDto, SignUpDto } from './worker.dto';
 import { WorkerService } from './worker.service';
 export declare class WorkerController {
     private readonly workerService;
@@ -51,5 +51,7 @@ export declare class WorkerController {
         rates: import(".prisma/client").Rate[];
     }>;
     updateMyProfile(request: any, updatedData: any): Promise<import(".prisma/client").Worker>;
-    rate(rateData: any, workerId: string): Promise<import(".prisma/client").Rate>;
+    rate(rateData: any, request: any, workerId: string): Promise<import(".prisma/client").Rate>;
+    getRates(workerId: string): Promise<import(".prisma/client").Rate[]>;
+    deleteRate(request: any, params: DeleteRateDto): Promise<import(".prisma/client").Rate>;
 }

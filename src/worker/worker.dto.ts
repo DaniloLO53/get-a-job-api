@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsEmail, MinLength } from 'class-validator';
+import { IsNotEmpty, IsEmail, MinLength, IsString } from 'class-validator';
 
 export class SignUpDto {
   @IsNotEmpty()
@@ -15,4 +15,14 @@ export class SignUpDto {
 
   @IsNotEmpty()
   nickname: string;
+}
+
+export class DeleteRateDto {
+  @IsString()
+  @IsNotEmpty()
+  workerId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  rateId: string;
 }

@@ -1,7 +1,7 @@
-import { ConflictException, forwardRef, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Worker } from '@prisma/client';
-import { SignUpDto } from './worker.dto';
+import { DeleteRateDto, SignUpDto } from './worker.dto';
 import * as bcrypt from 'bcrypt';
 import { filterWorkerField } from './worker.helper';
 
@@ -32,14 +32,43 @@ export class WorkerService {
     return filterWorkerField(result)
   }
 
-  async rate(rateData: any, workerId: string) {
+  async rate(rateData: any, workerId: string, customerId: number) {
     const { rate, comment } = rateData;
+
+    console.log('workderId', workerId)
+    console.log('customerId', customerId)
 
     return await this.prismaService.rate.create({
       data: {
-        rate, comment, worker_id: Number(workerId)
+        rate, comment, worker_id: Number(workerId), customer_id: customerId
       },
     });
+  }
+
+  async deleteRate(customerId: number, params: DeleteRateDto) {
+    console.log(params)
+    const { rateId } = params;
+    const rate = await this.prismaService.rate.findUnique({
+      where: {
+        customer_id: customerId 
+      }
+    })
+    if (!rate) throw new ConflictException({
+      message: 'Rate not found'
+    })
+    if (rate.customer_id !== customerId) throw new UnauthorizedException({
+      message: 'Can only delete own rate'
+    })
+
+    return await this.prismaService.rate.delete({
+      where: {
+        id: Number(rateId)
+      }
+    })
+  }
+
+  async getRates(workerId: string) {
+    return await this.prismaService.rate.findMany({ where: { worker_id: Number(workerId) }});
   }
 
   async updateMyProfile(workerId: string, updatedData: any) {

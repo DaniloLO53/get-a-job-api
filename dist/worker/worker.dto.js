@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SignUpDto = void 0;
+exports.DeleteRateDto = exports.SignUpDto = void 0;
 const class_validator_1 = require("class-validator");
 class SignUpDto {
 }
@@ -33,4 +33,17 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignUpDto.prototype, "nickname", void 0);
+class DeleteRateDto {
+}
+exports.DeleteRateDto = DeleteRateDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], DeleteRateDto.prototype, "workerId", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], DeleteRateDto.prototype, "rateId", void 0);
 //# sourceMappingURL=worker.dto.js.map

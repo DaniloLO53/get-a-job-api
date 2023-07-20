@@ -4,3 +4,7 @@ export declare class SignUpDto {
     confirmPassword: string;
     nickname: string;
 }
+export declare class DeleteRateDto {
+    workerId: string;
+    rateId: string;
+}

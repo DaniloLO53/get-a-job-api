@@ -38,13 +38,40 @@ let WorkerService = exports.WorkerService = class WorkerService {
         });
         return (0, worker_helper_1.filterWorkerField)(result);
     }
-    async rate(rateData, workerId) {
+    async rate(rateData, workerId, customerId) {
         const { rate, comment } = rateData;
+        console.log('workderId', workerId);
+        console.log('customerId', customerId);
         return await this.prismaService.rate.create({
             data: {
-                rate, comment, worker_id: Number(workerId)
+                rate, comment, worker_id: Number(workerId), customer_id: customerId
             },
         });
+    }
+    async deleteRate(customerId, params) {
+        console.log(params);
+        const { rateId } = params;
+        const rate = await this.prismaService.rate.findUnique({
+            where: {
+                customer_id: customerId
+            }
+        });
+        if (!rate)
+            throw new common_1.ConflictException({
+                message: 'Rate not found'
+            });
+        if (rate.customer_id !== customerId)
+            throw new common_1.UnauthorizedException({
+                message: 'Can only delete own rate'
+            });
+        return await this.prismaService.rate.delete({
+            where: {
+                id: Number(rateId)
+            }
+        });
+    }
+    async getRates(workerId) {
+        return await this.prismaService.rate.findMany({ where: { worker_id: Number(workerId) } });
     }
     async updateMyProfile(workerId, updatedData) {
         const { email, first_name, last_name, nickname } = updatedData;
