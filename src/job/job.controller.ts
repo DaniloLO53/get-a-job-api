@@ -24,6 +24,13 @@ export class JobController {
     return await this.jobService.updateJob(jobData, request.userId, jobId);
   }
 
+  @Get('/:jobId')
+  @Roles(Role.Customer)
+  @UseGuards(AuthGuard)
+  async getJob(@Param('jobId') jobId: string) {
+    return await this.jobService.getJob(jobId);
+  }
+
   @Get('feed')
   @Roles(Role.Customer)
   @UseGuards(AuthGuard)

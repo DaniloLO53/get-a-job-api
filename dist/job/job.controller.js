@@ -28,6 +28,9 @@ let JobController = exports.JobController = class JobController {
     async updateJob(jobData, request, jobId) {
         return await this.jobService.updateJob(jobData, request.userId, jobId);
     }
+    async getJob(jobId) {
+        return await this.jobService.getJob(jobId);
+    }
     async listJobs(queries) {
         const jobs = await this.jobService.listJobs(queries);
         this.lastJobInResults = jobs[2];
@@ -61,6 +64,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object, String]),
     __metadata("design:returntype", Promise)
 ], JobController.prototype, "updateJob", null);
+__decorate([
+    (0, common_1.Get)('/:jobId'),
+    (0, role_decorator_1.Roles)(role_enum_1.Role.Customer),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Param)('jobId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], JobController.prototype, "getJob", null);
 __decorate([
     (0, common_1.Get)('feed'),
     (0, role_decorator_1.Roles)(role_enum_1.Role.Customer),
