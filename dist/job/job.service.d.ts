@@ -3,6 +3,7 @@ import { DeleteScheduleDto, ScheduleDto } from './job.dto';
 export declare class JobService {
     private readonly prismaService;
     constructor(prismaService: PrismaService);
+    createAgreement(params: DeleteScheduleDto, customerId: number): Promise<import(".prisma/client").Agreement>;
     deleteSchedule(params: DeleteScheduleDto, workerId: number): Promise<import(".prisma/client").Schedule>;
     getSchedules(id: string): Promise<import(".prisma/client").Schedule[]>;
     createSchedule(scheduleData: ScheduleDto, workerId: number, jobId: string): Promise<import(".prisma/client").Schedule>;

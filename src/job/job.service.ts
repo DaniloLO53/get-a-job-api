@@ -2,11 +2,44 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { DeleteScheduleDto, ScheduleDto } from './job.dto';
-import { Direction } from './job.interface';
 
 @Injectable()
 export class JobService {
   constructor(private readonly prismaService: PrismaService) {}
+
+  async createAgreement(params: DeleteScheduleDto, customerId: number) {
+    const { scheduleId, jobId } = params;
+
+    const job = await this.prismaService.job.findUnique({
+      where: {
+       id: Number(jobId)
+      }
+    });
+    const schedule = await this.prismaService.schedule.findUnique({
+      where: {
+        id: Number(scheduleId)
+      }
+    });
+    const agreement = await this.prismaService.agreement.findUnique({
+      where: {
+        schedule_id: Number(scheduleId)
+      }
+    });
+
+    if (!schedule || !job) throw new ConflictException({
+      message: 'No job or schedule found'
+    });
+    if (agreement) throw new ConflictException({
+      message: 'Schedule is already agreed'
+    });
+
+    return await this.prismaService.agreement.create({
+      data: {
+        schedule_id: Number(scheduleId),
+        customer_id: customerId
+      }
+    })
+  }
 
   async deleteSchedule(params: DeleteScheduleDto, workerId: number) {
     const { jobId, scheduleId } = params;
@@ -27,7 +60,7 @@ export class JobService {
     });
     if (job.worker_id !== workerId) throw new UnauthorizedException({
       message: 'Can only modify own content'
-    })
+    });
 
     return await this.prismaService.schedule.delete({
       where: {

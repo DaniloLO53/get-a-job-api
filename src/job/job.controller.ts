@@ -53,6 +53,13 @@ export class JobController {
     return await this.jobService.deleteSchedule(params, request.userId);
   }
 
+  @Post('/:jobId/schedules/:scheduleId/agreements')
+  @Roles(Role.Customer)
+  @UseGuards(AuthGuard)
+  async createAgreement(@Param() params: DeleteScheduleDto, @Request() request: any) {
+    return await this.jobService.createAgreement(params, request.userId);
+  }
+
   @Get('feed')
   @Roles(Role.Customer)
   @UseGuards(AuthGuard)

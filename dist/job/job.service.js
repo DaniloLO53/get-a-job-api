@@ -17,6 +17,38 @@ let JobService = exports.JobService = class JobService {
     constructor(prismaService) {
         this.prismaService = prismaService;
     }
+    async createAgreement(params, customerId) {
+        const { scheduleId, jobId } = params;
+        const job = await this.prismaService.job.findUnique({
+            where: {
+                id: Number(jobId)
+            }
+        });
+        const schedule = await this.prismaService.schedule.findUnique({
+            where: {
+                id: Number(scheduleId)
+            }
+        });
+        const agreement = await this.prismaService.agreement.findUnique({
+            where: {
+                schedule_id: Number(scheduleId)
+            }
+        });
+        if (!schedule || !job)
+            throw new common_1.ConflictException({
+                message: 'No job or schedule found'
+            });
+        if (agreement)
+            throw new common_1.ConflictException({
+                message: 'Schedule is already agreed'
+            });
+        return await this.prismaService.agreement.create({
+            data: {
+                schedule_id: Number(scheduleId),
+                customer_id: customerId
+            }
+        });
+    }
     async deleteSchedule(params, workerId) {
         const { jobId, scheduleId } = params;
         const job = await this.prismaService.job.findUnique({

@@ -13,6 +13,7 @@ export declare class JobController {
     createSchedule(scheduleData: ScheduleDto, request: any, jobId: string): Promise<import(".prisma/client").Schedule>;
     getSchedules(jobId: string): Promise<import(".prisma/client").Schedule[]>;
     deleteSchedule(params: DeleteScheduleDto, request: any): Promise<import(".prisma/client").Schedule>;
+    createAgreement(params: DeleteScheduleDto, request: any): Promise<import(".prisma/client").Agreement>;
     listJobs(queries: any): Promise<(import(".prisma/client").Job & {
         worker: import(".prisma/client").Worker;
         location_job: import(".prisma/client").LocationJob[];
