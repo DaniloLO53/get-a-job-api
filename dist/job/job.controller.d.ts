@@ -1,3 +1,4 @@
+import { DeleteScheduleDto, ScheduleDto } from './job.dto';
 import { JobService } from './job.service';
 export declare class JobController {
     private readonly jobService;
@@ -9,6 +10,9 @@ export declare class JobController {
         worker: import(".prisma/client").Worker;
         location_job: import(".prisma/client").LocationJob[];
     }>;
+    createSchedule(scheduleData: ScheduleDto, request: any, jobId: string): Promise<import(".prisma/client").Schedule>;
+    getSchedules(jobId: string): Promise<import(".prisma/client").Schedule[]>;
+    deleteSchedule(params: DeleteScheduleDto, request: any): Promise<import(".prisma/client").Schedule>;
     listJobs(queries: any): Promise<(import(".prisma/client").Job & {
         worker: import(".prisma/client").Worker;
         location_job: import(".prisma/client").LocationJob[];

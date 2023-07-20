@@ -17,10 +17,29 @@ let JobService = exports.JobService = class JobService {
     constructor(prismaService) {
         this.prismaService = prismaService;
     }
-    async deleteSchedule(id) {
+    async deleteSchedule(params, workerId) {
+        const { jobId, scheduleId } = params;
+        const job = await this.prismaService.job.findUnique({
+            where: {
+                id: Number(jobId)
+            }
+        });
+        const schedule = await this.prismaService.schedule.findUnique({
+            where: {
+                id: Number(scheduleId)
+            }
+        });
+        if (!schedule || !job)
+            throw new common_1.ConflictException({
+                message: 'No job or schedule found'
+            });
+        if (job.worker_id !== workerId)
+            throw new common_1.UnauthorizedException({
+                message: 'Can only modify own content'
+            });
         return await this.prismaService.schedule.delete({
             where: {
-                id: Number(id)
+                id: Number(scheduleId)
             }
         });
     }
@@ -31,13 +50,20 @@ let JobService = exports.JobService = class JobService {
             }
         });
     }
-    async createSchedule(id, queries) {
+    async createSchedule(scheduleData, workerId, jobId) {
+        const job = await this.prismaService.job.findUnique({ where: { id: Number(jobId) } });
+        if (!job)
+            throw new common_1.ConflictException({ message: 'No jobs found' });
+        if (job.worker_id !== Number(workerId))
+            throw new common_1.UnauthorizedException({
+                message: 'Can only modify own content'
+            });
         return await this.prismaService.schedule.create({
             data: {
-                day: queries.day,
-                day_hour_start: queries.day_hour_start,
-                day_hour_end: queries.day_hour_end,
-                job_id: Number(id)
+                day: scheduleData.day,
+                day_hour_start: scheduleData.day_hour_start,
+                day_hour_end: scheduleData.day_hour_end,
+                job_id: Number(jobId)
             }
         });
     }

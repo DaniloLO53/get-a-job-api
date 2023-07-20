@@ -1,17 +1,37 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { ScheduleDto } from './job.dto';
+import { DeleteScheduleDto, ScheduleDto } from './job.dto';
 import { Direction } from './job.interface';
 
 @Injectable()
 export class JobService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async deleteSchedule(id: string) {
+  async deleteSchedule(params: DeleteScheduleDto, workerId: number) {
+    const { jobId, scheduleId } = params;
+
+    const job = await this.prismaService.job.findUnique({
+       where: {
+        id: Number(jobId)
+       }
+    });
+    const schedule = await this.prismaService.schedule.findUnique({
+      where: {
+       id: Number(scheduleId)
+      }
+   });
+
+    if (!schedule || !job) throw new ConflictException({
+      message: 'No job or schedule found'
+    });
+    if (job.worker_id !== workerId) throw new UnauthorizedException({
+      message: 'Can only modify own content'
+    })
+
     return await this.prismaService.schedule.delete({
       where: {
-        id: Number(id)
+        id: Number(scheduleId)
       }
     })
   }
@@ -24,13 +44,20 @@ export class JobService {
     })
   }
 
-  async createSchedule(id: string, queries: ScheduleDto) {
+  async createSchedule(scheduleData: ScheduleDto, workerId: number, jobId: string) {
+    const job = await this.prismaService.job.findUnique({ where: { id: Number(jobId) }});
+
+    if (!job) throw new ConflictException({ message: 'No jobs found' });
+    if (job.worker_id !== Number(workerId)) throw new UnauthorizedException({
+      message: 'Can only modify own content'
+    });
+
     return await this.prismaService.schedule.create({
       data: {
-        day: queries.day,
-        day_hour_start: queries.day_hour_start,
-        day_hour_end: queries.day_hour_end,
-        job_id: Number(id)
+        day: scheduleData.day,
+        day_hour_start: scheduleData.day_hour_start,
+        day_hour_end: scheduleData.day_hour_end,
+        job_id: Number(jobId)
       }
     })
   }

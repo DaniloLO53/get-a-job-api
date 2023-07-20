@@ -2,6 +2,7 @@ import { Controller, Get, Param, Post, Query, Delete, UseGuards, Body, Request, 
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/auth/role.decorator';
 import { Role } from 'src/auth/role.enum';
+import { DeleteScheduleDto, ScheduleDto } from './job.dto';
 import { JobService } from './job.service';
 
 @Controller('jobs')
@@ -29,6 +30,27 @@ export class JobController {
   @UseGuards(AuthGuard)
   async getJob(@Param('jobId') jobId: string) {
     return await this.jobService.getJob(jobId);
+  }
+
+  @Post('/:jobId/schedules')
+  @Roles(Role.Worker)
+  @UseGuards(AuthGuard)
+  async createSchedule(@Body() scheduleData: ScheduleDto, @Request() request: any, @Param('jobId') jobId: string) {
+    return await this.jobService.createSchedule(scheduleData, request.userId, jobId);
+  }
+
+  @Get('/:jobId/schedules')
+  @Roles(Role.Customer)
+  @UseGuards(AuthGuard)
+  async getSchedules(@Param('jobId') jobId: string) {
+    return await this.jobService.getSchedules(jobId);
+  }
+
+  @Delete('/:jobId/schedules/:scheduleId')
+  @Roles(Role.Worker)
+  @UseGuards(AuthGuard)
+  async deleteSchedule(@Param() params: DeleteScheduleDto, @Request() request: any) {
+    return await this.jobService.deleteSchedule(params, request.userId);
   }
 
   @Get('feed')

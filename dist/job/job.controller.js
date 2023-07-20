@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const auth_guard_1 = require("../auth/auth.guard");
 const role_decorator_1 = require("../auth/role.decorator");
 const role_enum_1 = require("../auth/role.enum");
+const job_dto_1 = require("./job.dto");
 const job_service_1 = require("./job.service");
 let JobController = exports.JobController = class JobController {
     constructor(jobService) {
@@ -30,6 +31,15 @@ let JobController = exports.JobController = class JobController {
     }
     async getJob(jobId) {
         return await this.jobService.getJob(jobId);
+    }
+    async createSchedule(scheduleData, request, jobId) {
+        return await this.jobService.createSchedule(scheduleData, request.userId, jobId);
+    }
+    async getSchedules(jobId) {
+        return await this.jobService.getSchedules(jobId);
+    }
+    async deleteSchedule(params, request) {
+        return await this.jobService.deleteSchedule(params, request.userId);
     }
     async listJobs(queries) {
         const jobs = await this.jobService.listJobs(queries);
@@ -73,6 +83,36 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], JobController.prototype, "getJob", null);
+__decorate([
+    (0, common_1.Post)('/:jobId/schedules'),
+    (0, role_decorator_1.Roles)(role_enum_1.Role.Worker),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Param)('jobId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [job_dto_1.ScheduleDto, Object, String]),
+    __metadata("design:returntype", Promise)
+], JobController.prototype, "createSchedule", null);
+__decorate([
+    (0, common_1.Get)('/:jobId/schedules'),
+    (0, role_decorator_1.Roles)(role_enum_1.Role.Customer),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Param)('jobId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], JobController.prototype, "getSchedules", null);
+__decorate([
+    (0, common_1.Delete)('/:jobId/schedules/:scheduleId'),
+    (0, role_decorator_1.Roles)(role_enum_1.Role.Worker),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Param)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [job_dto_1.DeleteScheduleDto, Object]),
+    __metadata("design:returntype", Promise)
+], JobController.prototype, "deleteSchedule", null);
 __decorate([
     (0, common_1.Get)('feed'),
     (0, role_decorator_1.Roles)(role_enum_1.Role.Customer),
