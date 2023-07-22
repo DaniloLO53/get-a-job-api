@@ -41,6 +41,31 @@ export class JobService {
     })
   }
 
+  async getAgreement(params: DeleteScheduleDto, customerId: number) {
+    const { scheduleId, jobId } = params;
+
+    const job = await this.prismaService.job.findUnique({
+      where: {
+       id: Number(jobId)
+      }
+    });
+    const schedule = await this.prismaService.schedule.findUnique({
+      where: {
+        id: Number(scheduleId)
+      }
+    });
+
+    if (!schedule || !job) throw new ConflictException({
+      message: 'No job or schedule or agreement found'
+    });
+
+    return await this.prismaService.agreement.findUnique({
+      where: {
+        schedule_id: Number(scheduleId)
+      }
+    })
+  }
+
   async deleteSchedule(params: DeleteScheduleDto, workerId: number) {
     const { jobId, scheduleId } = params;
 

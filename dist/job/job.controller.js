@@ -44,6 +44,9 @@ let JobController = exports.JobController = class JobController {
     async createAgreement(params, request) {
         return await this.jobService.createAgreement(params, request.userId);
     }
+    async getAgreement(params, request) {
+        return await this.jobService.getAgreement(params, request.userId);
+    }
     async listJobs(queries) {
         const jobs = await this.jobService.listJobs(queries);
         this.lastJobInResults = jobs[2];
@@ -117,7 +120,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], JobController.prototype, "deleteSchedule", null);
 __decorate([
-    (0, common_1.Post)('/:jobId/schedules/:scheduleId/agreements'),
+    (0, common_1.Post)('/:jobId/schedules/:scheduleId/agreement'),
     (0, role_decorator_1.Roles)(role_enum_1.Role.Customer),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, common_1.Param)()),
@@ -126,6 +129,16 @@ __decorate([
     __metadata("design:paramtypes", [job_dto_1.DeleteScheduleDto, Object]),
     __metadata("design:returntype", Promise)
 ], JobController.prototype, "createAgreement", null);
+__decorate([
+    (0, common_1.Get)('/:jobId/schedules/:scheduleId/agreement'),
+    (0, role_decorator_1.Roles)(role_enum_1.Role.Customer, role_enum_1.Role.Worker),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Param)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [job_dto_1.DeleteScheduleDto, Object]),
+    __metadata("design:returntype", Promise)
+], JobController.prototype, "getAgreement", null);
 __decorate([
     (0, common_1.Get)('feed'),
     (0, role_decorator_1.Roles)(role_enum_1.Role.Customer),
