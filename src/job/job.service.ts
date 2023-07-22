@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { DeleteScheduleDto, ScheduleDto } from './job.dto';
+import { DeleteAgreementDto, DeleteScheduleDto, ScheduleDto } from './job.dto';
 
 @Injectable()
 export class JobService {
@@ -65,6 +65,44 @@ export class JobService {
       }
     })
   }
+
+  async deleteAgreement(params: DeleteAgreementDto, userId: number, roles: string[]) {
+    const { jobId, scheduleId, agreementId } = params;
+    const [role] = roles;
+
+    const job = await this.prismaService.job.findUnique({
+       where: {
+        id: Number(jobId)
+       }
+    });
+    const schedule = await this.prismaService.schedule.findUnique({
+      where: {
+       id: Number(scheduleId)
+      }
+    });
+    const agreement = await this.prismaService.agreement.findUnique({
+      where: {
+      id: Number(agreementId)
+      }
+    });
+
+    if (!schedule || !job || !agreement) throw new ConflictException({
+      message: 'No job or schedule or agreement found'
+    });
+    if (
+      (role === 'worker' && job.worker_id !== userId) ||
+      (role === 'customer' && agreement.customer_id !== userId)
+    ) throw new UnauthorizedException({
+      message: 'Can only modify own content'
+    });
+
+    return await this.prismaService.agreement.delete({
+      where: {
+        id: Number(agreementId)
+      }
+    })
+  }
+  
 
   async deleteSchedule(params: DeleteScheduleDto, workerId: number) {
     const { jobId, scheduleId } = params;

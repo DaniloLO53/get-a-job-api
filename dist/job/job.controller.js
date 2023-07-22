@@ -41,6 +41,9 @@ let JobController = exports.JobController = class JobController {
     async deleteSchedule(params, request) {
         return await this.jobService.deleteSchedule(params, request.userId);
     }
+    async deleteAgreement(params, request) {
+        return await this.jobService.deleteAgreement(params, request.userId, request.roles);
+    }
     async createAgreement(params, request) {
         return await this.jobService.createAgreement(params, request.userId);
     }
@@ -119,6 +122,16 @@ __decorate([
     __metadata("design:paramtypes", [job_dto_1.DeleteScheduleDto, Object]),
     __metadata("design:returntype", Promise)
 ], JobController.prototype, "deleteSchedule", null);
+__decorate([
+    (0, common_1.Delete)('/:jobId/schedules/:scheduleId/agreement/:agreementId'),
+    (0, role_decorator_1.Roles)(role_enum_1.Role.Customer, role_enum_1.Role.Worker),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Param)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [job_dto_1.DeleteAgreementDto, Object]),
+    __metadata("design:returntype", Promise)
+], JobController.prototype, "deleteAgreement", null);
 __decorate([
     (0, common_1.Post)('/:jobId/schedules/:scheduleId/agreement'),
     (0, role_decorator_1.Roles)(role_enum_1.Role.Customer),

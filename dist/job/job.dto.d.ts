@@ -7,3 +7,6 @@ export declare class DeleteScheduleDto {
     jobId: string;
     scheduleId: string;
 }
+export declare class DeleteAgreementDto extends DeleteScheduleDto {
+    agreementId: string;
+}

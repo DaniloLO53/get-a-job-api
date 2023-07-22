@@ -1,4 +1,4 @@
-import { DeleteScheduleDto, ScheduleDto } from './job.dto';
+import { DeleteAgreementDto, DeleteScheduleDto, ScheduleDto } from './job.dto';
 import { JobService } from './job.service';
 export declare class JobController {
     private readonly jobService;
@@ -13,6 +13,7 @@ export declare class JobController {
     createSchedule(scheduleData: ScheduleDto, request: any, jobId: string): Promise<import(".prisma/client").Schedule>;
     getSchedules(jobId: string): Promise<import(".prisma/client").Schedule[]>;
     deleteSchedule(params: DeleteScheduleDto, request: any): Promise<import(".prisma/client").Schedule>;
+    deleteAgreement(params: DeleteAgreementDto, request: any): Promise<import(".prisma/client").Agreement>;
     createAgreement(params: DeleteScheduleDto, request: any): Promise<import(".prisma/client").Agreement>;
     getAgreement(params: DeleteScheduleDto, request: any): Promise<import(".prisma/client").Agreement>;
     listJobs(queries: any): Promise<(import(".prisma/client").Job & {

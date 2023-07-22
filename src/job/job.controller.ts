@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Query, Delete, UseGuards, Body, Request, 
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/auth/role.decorator';
 import { Role } from 'src/auth/role.enum';
-import { DeleteScheduleDto, ScheduleDto } from './job.dto';
+import { DeleteAgreementDto, DeleteScheduleDto, ScheduleDto } from './job.dto';
 import { JobService } from './job.service';
 
 @Controller('jobs')
@@ -51,6 +51,13 @@ export class JobController {
   @UseGuards(AuthGuard)
   async deleteSchedule(@Param() params: DeleteScheduleDto, @Request() request: any) {
     return await this.jobService.deleteSchedule(params, request.userId);
+  }
+
+  @Delete('/:jobId/schedules/:scheduleId/agreement/:agreementId')
+  @Roles(Role.Customer, Role.Worker)
+  @UseGuards(AuthGuard)
+  async deleteAgreement(@Param() params: DeleteAgreementDto, @Request() request: any) {
+    return await this.jobService.deleteAgreement(params, request.userId, request.roles);
   }
 
   @Post('/:jobId/schedules/:scheduleId/agreement')

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteScheduleDto = exports.ScheduleDto = void 0;
+exports.DeleteAgreementDto = exports.DeleteScheduleDto = exports.ScheduleDto = void 0;
 const class_validator_1 = require("class-validator");
 const regexDay = /^(0[1-9]|1\d|2\d|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
 const regexTime = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
@@ -44,4 +44,12 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], DeleteScheduleDto.prototype, "scheduleId", void 0);
+class DeleteAgreementDto extends DeleteScheduleDto {
+}
+exports.DeleteAgreementDto = DeleteAgreementDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], DeleteAgreementDto.prototype, "agreementId", void 0);
 //# sourceMappingURL=job.dto.js.map

@@ -71,6 +71,39 @@ let JobService = exports.JobService = class JobService {
             }
         });
     }
+    async deleteAgreement(params, userId, roles) {
+        const { jobId, scheduleId, agreementId } = params;
+        const [role] = roles;
+        const job = await this.prismaService.job.findUnique({
+            where: {
+                id: Number(jobId)
+            }
+        });
+        const schedule = await this.prismaService.schedule.findUnique({
+            where: {
+                id: Number(scheduleId)
+            }
+        });
+        const agreement = await this.prismaService.agreement.findUnique({
+            where: {
+                id: Number(agreementId)
+            }
+        });
+        if (!schedule || !job || !agreement)
+            throw new common_1.ConflictException({
+                message: 'No job or schedule or agreement found'
+            });
+        if ((role === 'worker' && job.worker_id !== userId) ||
+            (role === 'customer' && agreement.customer_id !== userId))
+            throw new common_1.UnauthorizedException({
+                message: 'Can only modify own content'
+            });
+        return await this.prismaService.agreement.delete({
+            where: {
+                id: Number(agreementId)
+            }
+        });
+    }
     async deleteSchedule(params, workerId) {
         const { jobId, scheduleId } = params;
         const job = await this.prismaService.job.findUnique({

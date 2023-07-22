@@ -27,3 +27,9 @@ export class DeleteScheduleDto {
   @IsNotEmpty()
   scheduleId: string;
 }
+
+export class DeleteAgreementDto extends DeleteScheduleDto {
+  @IsString()
+  @IsNotEmpty()
+  agreementId: string;
+}
